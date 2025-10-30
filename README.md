@@ -73,7 +73,7 @@ Para correr este proyecto completo localmente, necesitarás tener instalado el s
 Este proyecto fue desarrollado por:
 
 * Carlos Javier Ramos
-* Edward Leandro Sanchez
+* Edward Leandro López
 * Samuel David Gómez
 
 **Institución:**
