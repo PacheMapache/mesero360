@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: mesero360-backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=mesero360
+      - DB_PASSWORD=mesero360pass
+      - DB_NAME=mesero360
+      - JWT_SECRET=your_jwt_secret_here
+    depends_on:
+      - db
+    networks:
+      - mesero360-network
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+  db:
+    image: postgres:13-alpine
+    container_name: mesero360-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=mesero360
+      - POSTGRES_PASSWORD=mesero360pass
+      - POSTGRES_DB=mesero360
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - mesero360-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@mesero360.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    networks:
+      - mesero360-network
+
+networks:
+  mesero360-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
