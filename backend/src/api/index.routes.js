@@ -1,5 +1,6 @@
 const { Router } = require('express');
 
+const authRoutes = require('./auth.routes');
 const rolesRoutes = require('./roles.routes');
 const usuariosRoutes = require('./usuarios.routes');
 const categoriasRoutes = require('./categorias.routes');
@@ -10,6 +11,7 @@ const detallePedidosRoutes = require('./detalle-pedidos.routes');
 
 const router = Router();
 
+router.use('/auth', authRoutes);
 router.use('/roles', rolesRoutes);
 router.use('/usuarios', usuariosRoutes);
 router.use('/categorias', categoriasRoutes);
