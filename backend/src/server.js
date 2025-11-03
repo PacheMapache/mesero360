@@ -2,6 +2,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const db = require('./config/database');
 
 // 2. Cargar variables de entorno
 // (Esto busca un archivo .env y carga su contenido)
@@ -25,13 +26,27 @@ app.get('/', (req, res) => {
   res.json({ message: '¡API de Mesero360 funcionando!' });
 });
 
-// 7. TODO: Conectar a la Base de Datos
-// (Aquí irá la lógica de src/config/database.js)
+// 7. Healthcheck con DB (opcional)
+app.get('/health', async (req, res) => {
+  try {
+    await db.testConnection();
+    res.json({ status: 'ok', db: 'connected' });
+  } catch (e) {
+    res.status(500).json({ status: 'error', db: 'disconnected', error: e.message });
+  }
+});
 
-// 8. TODO: Cargar Rutas Principales
-// (Aquí importaremos el archivo src/api/index.routes.js)
+// 8. Cargar Rutas Principales
+const apiRoutes = require('./api/index.routes');
+app.use('/api', apiRoutes);
 
-// 9. Iniciar el servidor
-app.listen(PORT, () => {
+// 9. Iniciar el servidor (y probar conexión a la BD al arrancar)
+app.listen(PORT, async () => {
   console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+  try {
+    await db.testConnection();
+    console.log('✅ Conexión a la base de datos exitosa');
+  } catch (err) {
+    console.error('❌ Error conectando a la base de datos:', err.message);
+  }
 });
