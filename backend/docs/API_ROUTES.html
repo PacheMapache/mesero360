@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mesero360 - Guía de Rutas API</title>
+  <style>
+    :root { --bg: #ffffff; --fg: #111827; --muted:#6b7280; --accent:#2563eb; --border:#e5e7eb; }
+    html, body { background: var(--bg); color: var(--fg); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+    .container { max-width: 980px; margin: 40px auto; padding: 0 20px; }
+    h1 { font-size: 28px; margin: 0 0 8px; }
+    h2 { font-size: 22px; margin: 28px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+    h3 { font-size: 18px; margin: 18px 0 8px; }
+    p { line-height: 1.6; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .tag { display:inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; border:1px solid var(--border); margin-right:6px; }
+    .get { color:#065f46; border-color:#a7f3d0; background:#ecfdf5; }
+    .post { color:#1d4ed8; border-color:#bfdbfe; background:#eff6ff; }
+    .put { color:#92400e; border-color:#fde68a; background:#fffbeb; }
+    .patch { color:#7c3aed; border-color:#ddd6fe; background:#f5f3ff; }
+    .delete { color:#991b1b; border-color:#fecaca; background:#fef2f2; }
+    .endpoint { border:1px solid var(--border); border-radius:10px; padding:14px; margin:14px 0; }
+    .path { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13px; background:#f9fafb; padding: 3px 6px; border-radius:6px; border:1px solid var(--border); }
+    .meta { color: var(--muted); font-size: 13px; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; border:1px solid var(--border); border-bottom-width:2px; padding: 1px 6px; border-radius:6px; background:#f9fafb; }
+    .note { background:#f9fafb; border-left: 3px solid var(--accent); padding:10px 12px; margin: 10px 0; }
+    .small { font-size: 13px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Mesero360 - Guía de Rutas API</h1>
+    <p class="meta">Base URL local: <code>http://localhost:3000/api</code></p>
+    <div class="note small">
+      Autenticación JWT (cuando aplica): header <code>Authorization: Bearer &lt;token&gt;</code>.<br />
+      Formato de entrada/salida: JSON (excepto uploads con <code>multipart/form-data</code>).
+    </div>
+
+    <h2>Autenticación</h2>
+    <div class="endpoint">
+      <span class="tag post">POST</span> <span class="path">/auth/login</span>
+      <div class="small">Body: { username: string, password: string } → Respuesta: { token, usuario { id, nombre, username, role_id, role_name, activo } }</div>
+    </div>
+
+    <h2>Usuarios</h2>
+    <p class="small">Nota: Crear/editar/eliminar requieren rol <b>Admin</b> con JWT.</p>
+    <div class="endpoint"><span class="tag get">GET</span> <span class="path">/usuarios</span> – Lista usuarios</div>
+    <div class="endpoint"><span class="tag get">GET</span> <span class="path">/usuarios/:id</span> – Usuario por id</div>
+    <div class="endpoint"><span class="tag post">POST</span> <span class="path">/usuarios</span> – Body: { nombre, username, password_hash, role_id, activo }</div>
+    <div class="endpoint"><span class="tag put">PUT</span> <span class="path">/usuarios/:id</span> – Body: { nombre, username, password_hash, role_id, activo }</div>
+    <div class="endpoint"><span class="tag delete">DELETE</span> <span class="path">/usuarios/:id</span></div>
+
+    <h2>Roles</h2>
+    <div class="endpoint"><span class="tag get">GET</span> <span class="path">/roles</span></div>
+    <div class="endpoint"><span class="tag get">GET</span> <span class="path">/roles/:id</span></div>
+    <div class="endpoint"><span class="tag post">POST</span> <span class="path">/roles</span> – Body: { nombre }</div>
+    <div class="endpoint"><span class="tag put">PUT</span> <span class="path">/roles/:id</span> – Body: { nombre }</div>
+    <div class="endpoint"><span class="tag delete">DELETE</span> <span class="path">/roles/:id</span></div>
+
+    <h2>Categorías</h2>
+    <div class="endpoint"><span class="tag get">GET</span> <span class="path">/categorias</span></div>
+    <div class="endpoint"><span class="tag get">GET</span> <span class="path">/categorias/:id</span></div>
+    <div class="endpoint"><span class="tag post">POST</span> <span class="path">/categorias</span> – Body: { nombre }</div>
+    <div class="endpoint"><span class="tag put">PUT</span> <span class="path">/categorias/:id</span> – Body: { nombre }</div>
+    <div class="endpoint"><span class="tag delete">DELETE</span> <span class="path">/categorias/:id</span></div>
+
+    <h2>Productos (imágenes S3)</h2>
+    <p class="small">Para subir imagen usa <code>multipart/form-data</code> con campo de archivo <b>imagen</b>.</p>
+    <div class="endpoint"><span class="tag get">GET</span> <span class="path">/productos</span></div>
+    <div class="endpoint"><span class="tag get">GET</span> <span class="path">/productos/:id</span></div>
+    <div class="endpoint"><span class="tag post">POST</span> <span class="path">/productos</span>
+      <div class="small">Campos (form-data): nombre (text), descripcion (text), precio (text/number), categoria_id (text/number), disponible (text true/false), imagen (file opcional)</div>
+    </div>
+    <div class="endpoint"><span class="tag put">PUT</span> <span class="path">/productos/:id</span>
+      <div class="small">Mismos campos de POST; si envías imagen nueva, reemplaza la anterior</div>
+    </div>
+    <div class="endpoint"><span class="tag patch">PATCH</span> <span class="path">/productos/:id/imagen</span>
+      <div class="small">Solo imagen (form-data): imagen (file, requerido)</div>
+    </div>
+    <div class="endpoint"><span class="tag delete">DELETE</span> <span class="path">/productos/:id</span> – Elimina también imagen en S3 si existe</div>
+
+    <h2>Mesas</h2>
+    <div class="endpoint"><span class="tag get">GET</span> <span class="path">/mesas</span></div>
+    <div class="endpoint"><span class="tag get">GET</span> <span class="path">/mesas/:id</span></div>
+    <div class="endpoint"><span class="tag post">POST</span> <span class="path">/mesas</span> – Body: { numero_mesa, capacidad?, estado? }</div>
+    <div class="endpoint"><span class="tag put">PUT</span> <span class="path">/mesas/:id</span> – Body: { numero_mesa, capacidad, estado }</div>
+    <div class="endpoint"><span class="tag delete">DELETE</span> <span class="path">/mesas/:id</span></div>
+
+    <h2>Pedidos</h2>
+    <div class="endpoint"><span class="tag get">GET</span> <span class="path">/pedidos</span> – Lista (desc)</div>
+    <div class="endpoint"><span class="tag get">GET</span> <span class="path">/pedidos/:id</span> – Devuelve { ...pedido, items: [] }</div>
+    <div class="endpoint"><span class="tag post">POST</span> <span class="path">/pedidos</span>
+      <table>
+        <tr><th>Body</th><td>
+<pre>{
+  "mesa_id": number,
+  "mesero_id": number,
+  "items": [
+    { "producto_id": number, "cantidad"?: number, "precio_unitario": number, "notas"?: string }
+  ]
+}</pre>
+        </td></tr>
+        <tr><th>Nota</th><td>Calcula y guarda el <code>total</code>; <code>cantidad</code> por defecto 1.</td></tr>
+      </table>
+    </div>
+    <div class="endpoint"><span class="tag put">PUT</span> <span class="path">/pedidos/:id</span>
+      <div class="small">Body: { estado: string, cajero_id?: number }. Si <code>estado</code> = "pagado" se asigna <code>fecha_cierre = NOW()</code>.</div>
+    </div>
+    <div class="endpoint"><span class="tag delete">DELETE</span> <span class="path">/pedidos/:id</span></div>
+
+    <h2>Detalle de Pedidos</h2>
+    <p class="small">Normalmente se maneja vía POST /pedidos; expuesto para mantenimiento/edición directa.</p>
+    <div class="endpoint"><span class="tag get">GET</span> <span class="path">/detalle-pedidos</span></div>
+    <div class="endpoint"><span class="tag get">GET</span> <span class="path">/detalle-pedidos/:id</span></div>
+    <div class="endpoint"><span class="tag post">POST</span> <span class="path">/detalle-pedidos</span> – Body: { pedido_id, producto_id, cantidad?, precio_unitario, notas? }</div>
+    <div class="endpoint"><span class="tag put">PUT</span> <span class="path">/detalle-pedidos/:id</span> – Body: { pedido_id, producto_id, cantidad, precio_unitario, notas }</div>
+    <div class="endpoint"><span class="tag delete">DELETE</span> <span class="path">/detalle-pedidos/:id</span></div>
+
+    <h2>Salud del Servicio</h2>
+    <div class="endpoint"><span class="tag get">GET</span> <span class="path">/ (root, fuera de /api)</span> – { message: "¡API de Mesero360 funcionando!" }</div>
+    <div class="endpoint"><span class="tag get">GET</span> <span class="path">/health (fuera de /api)</span> – { status: "ok", db: "connected" } o error</div>
+
+    <h2>Estados y Errores</h2>
+    <ul class="small">
+      <li>200/201 – éxito; 204 – sin contenido (DELETE)</li>
+      <li>400 – datos inválidos</li>
+      <li>401 – sin token o inválido (rutas protegidas)</li>
+      <li>403 – rol insuficiente</li>
+      <li>404 – no encontrado</li>
+      <li>500 – error interno</li>
+    </ul>
+
+    <h2>Notas de integración</h2>
+    <ul class="small">
+      <li>JWT: obtener con <code>POST /auth/login</code> y enviar en <code>Authorization</code>.</li>
+      <li>Uploads: usar <code>multipart/form-data</code> y campo de archivo <b>imagen</b> en productos.</li>
+      <li>Precios: enviados como string/number y almacenados en DECIMAL(10,2).</li>
+    </ul>
+
+  </div>
+</body>
+</html>
