@@ -1,50 +1,255 @@
-Backend - Mesero360 (Despliegue con Docker)
+# Backend - Mesero360
+
+API REST para el sistema de gestión de restaurantes Mesero360.
+
+## 📋 Tabla de Contenidos
+
+- [Requisitos previos](#requisitos-previos)
+- [Instalación local](#instalación-local)
+- [Despliegue con Docker](#despliegue-con-docker)
+- [Despliegue en AWS EC2](#despliegue-en-aws-ec2)
+- [Configuración de S3](#configuración-de-s3)
+- [Variables de entorno](#variables-de-entorno)
+- [API Endpoints](#api-endpoints)
+
+## Requisitos previos
+
+- Node.js 20.x o superior
+- PostgreSQL 14 o superior
+- Docker y Docker Compose (opcional)
+- Cuenta de AWS (para S3 y EC2)
+
+## Instalación local
+
+1. Clonar el repositorio:
+
+```bash
+git clone https://github.com/PacheMapache/mesero360.git
+cd mesero360/backend
+```
+
+2. Instalar dependencias:
+
+```bash
+npm install
+```
+
+3. Configurar variables de entorno:
+
+```bash
+cp .env.example .env
+# Editar .env con tus credenciales
+```
+
+4. Inicializar la base de datos:
+
+```bash
+npm run migrate
+npm run seed  # Opcional: cargar datos de demostración
+```
+
+5. Iniciar el servidor:
+
+```bash
+npm run dev  # Desarrollo
+npm start    # Producción
+```
+
+La API estará disponible en `http://localhost:3000`
+
+## Despliegue con Docker
 
 Este README contiene instrucciones para ejecutar el backend usando Docker (docker-compose).
 
-Requisitos previos:
-- Docker y Docker Compose instalados en la máquina.
+### Instrucciones rápidas:
 
-Instrucciones rápidas:
-
-1. Abrir una terminal en la carpeta `backend/`.
+1. Abrir una terminal en la carpeta `backend/`
 
 2. Construir y levantar los servicios (app, db, pgadmin):
 
-   En PowerShell (Windows):
+En PowerShell (Windows):
 
-   cd backend
-   docker-compose up -d --build
+```powershell
+cd backend
+docker-compose up -d --build
+```
 
 3. Verificar servicios y logs:
 
-   # Mostrar contenedores
-   docker ps
+```bash
+# Mostrar contenedores
+docker ps
 
-   # Ver logs del backend
-   docker logs -f mesero360-backend
+# Ver logs del backend
+docker logs -f mesero360-backend
+```
 
 Variables de entorno usadas (definidas en `docker-compose.yml`):
 - NODE_ENV: production
 - PORT: 3000
 - DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME
 - JWT_SECRET
+- AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_S3_BUCKET_NAME
 
-Notas importantes y bloqueos conocidos:
+## Despliegue en AWS EC2
 
-- La configuración de despliegue por Docker está incluida en `docker-compose.yml` y en este `Dockerfile`.
-- El servicio `db` usa PostgreSQL y `pgadmin` está disponible en el puerto 5050.
-- Actualmente los archivos de conexión a la base de datos y la lógica de modelos/controles aparecen vacíos o como placeholders (por ejemplo `src/config/database.js` está vacío y varios archivos en `src/models` y `src/controllers` están vacíos). Esto es un bloqueo funcional: antes de ejecutar la API en producción es necesario implementar la conexión a la BD y los endpoints.
+Para desplegar en una instancia EC2 de AWS, consulta la guía completa:
 
-Recomendaciones rápidas:
+**📖 [Guía de Despliegue en EC2](./docs/EC2_DEPLOYMENT.md)**
 
-1. Implementar `src/config/database.js` para realizar la conexión con PostgreSQL usando `pg` o un ORM (Sequelize, TypeORM, etc.).
-2. Añadir migraciones o un script de inicialización para crear tablas (puede ejecutarse desde una tarea de `docker-compose` o manualmente).
-3. Agregar un healthcheck básico en `docker-compose.yml` para validar que la API y la BD estén listas.
-4. Si el contenedor va a usarse en producción, considerar no montar el volumen de código (evitar `.:/usr/src/app`) y usar la imagen construida; para desarrollo, dejar el volumen para hot-reload.
+Incluye:
+- Creación y configuración de instancia EC2
+- Instalación de dependencias
+- Configuración de PostgreSQL o RDS
+- Configuración de PM2 para gestión de procesos
+- Configuración de Nginx como reverse proxy
+- Configuración de SSL con Let's Encrypt
+- Monitoreo y mantenimiento
 
-¿Qué falta para una entrega completa?
-- Implementar los modelos y controladores.
-- Implementar la capa de persistencia (`src/config/database.js`).
-- Agregar pruebas unitarias y / o integración.
-- Añadir un archivo `docker-compose.prod.yml` si quieres un despliegue distinto para producción (sin montar volúmenes, con variables secretas desde `env_file` o un secret manager).
+## Configuración de S3
+
+Para almacenar imágenes de productos en AWS S3, consulta la guía completa:
+
+**📖 [Guía de Configuración de S3](./docs/S3_SETUP.md)**
+
+Incluye:
+- Creación y configuración de bucket S3
+- Configuración de políticas de acceso público
+- Creación de usuario IAM con permisos
+- Ejemplos de uso de la API
+- Recomendaciones de seguridad
+
+## Variables de entorno
+
+Crea un archivo `.env` basado en `.env.example`:
+
+```env
+# App
+NODE_ENV=production
+PORT=3000
+JWT_SECRET=tu_jwt_secret_aqui
+
+# Base de datos
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_NAME=mesero360
+DB_SSL=false
+
+# AWS S3
+AWS_REGION=us-east-1
+AWS_ACCESS_KEY_ID=tu_access_key_id
+AWS_SECRET_ACCESS_KEY=tu_secret_access_key
+AWS_S3_BUCKET_NAME=mesero360-productos
+```
+
+## API Endpoints
+
+### Autenticación
+
+- `POST /api/auth/login` - Iniciar sesión
+- `POST /api/auth/register` - Registrar usuario
+
+### Usuarios
+
+- `GET /api/usuarios` - Listar usuarios
+- `GET /api/usuarios/:id` - Obtener usuario
+- `POST /api/usuarios` - Crear usuario
+- `PUT /api/usuarios/:id` - Actualizar usuario
+- `DELETE /api/usuarios/:id` - Eliminar usuario
+
+### Roles
+
+- `GET /api/roles` - Listar roles
+- `GET /api/roles/:id` - Obtener rol
+- `POST /api/roles` - Crear rol
+- `PUT /api/roles/:id` - Actualizar rol
+- `DELETE /api/roles/:id` - Eliminar rol
+
+### Categorías
+
+- `GET /api/categorias` - Listar categorías
+- `GET /api/categorias/:id` - Obtener categoría
+- `POST /api/categorias` - Crear categoría
+- `PUT /api/categorias/:id` - Actualizar categoría
+- `DELETE /api/categorias/:id` - Eliminar categoría
+
+### Productos (con soporte para imágenes S3)
+
+- `GET /api/productos` - Listar productos
+- `GET /api/productos/:id` - Obtener producto
+- `POST /api/productos` - Crear producto (multipart/form-data para imagen)
+- `PUT /api/productos/:id` - Actualizar producto (multipart/form-data para imagen)
+- `PATCH /api/productos/:id/imagen` - Actualizar solo imagen
+- `DELETE /api/productos/:id` - Eliminar producto (elimina también la imagen de S3)
+
+### Mesas
+
+- `GET /api/mesas` - Listar mesas
+- `GET /api/mesas/:id` - Obtener mesa
+- `POST /api/mesas` - Crear mesa
+- `PUT /api/mesas/:id` - Actualizar mesa
+- `DELETE /api/mesas/:id` - Eliminar mesa
+
+### Pedidos
+
+- `GET /api/pedidos` - Listar pedidos
+- `GET /api/pedidos/:id` - Obtener pedido
+- `POST /api/pedidos` - Crear pedido
+- `PUT /api/pedidos/:id` - Actualizar pedido
+- `DELETE /api/pedidos/:id` - Eliminar pedido
+
+### Detalle Pedidos
+
+- `GET /api/detalle-pedidos` - Listar detalles de pedidos
+- `GET /api/detalle-pedidos/:id` - Obtener detalle
+- `POST /api/detalle-pedidos` - Crear detalle
+- `PUT /api/detalle-pedidos/:id` - Actualizar detalle
+- `DELETE /api/detalle-pedidos/:id` - Eliminar detalle
+
+## Scripts disponibles
+
+```bash
+npm start          # Inicia el servidor en modo producción
+npm run dev        # Inicia el servidor en modo desarrollo con nodemon
+npm run migrate    # Ejecuta las migraciones de base de datos
+npm run seed       # Carga datos de demostración
+```
+
+## Estructura del proyecto
+
+```
+backend/
+├── docs/                      # Documentación
+│   ├── EC2_DEPLOYMENT.md     # Guía de despliegue en EC2
+│   └── S3_SETUP.md           # Guía de configuración S3
+├── src/
+│   ├── api/                  # Rutas de la API
+│   ├── config/               # Configuración
+│   ├── controllers/          # Controladores
+│   ├── middleware/           # Middleware
+│   ├── scripts/              # Scripts de BD
+│   ├── services/             # Servicios (S3, PDF, etc.)
+│   └── server.js            # Punto de entrada
+├── .env.example             # Ejemplo de variables de entorno
+├── docker-compose.yml       # Configuración Docker
+├── Dockerfile              # Imagen Docker
+└── package.json           # Dependencias
+```
+
+## Tecnologías utilizadas
+
+- **Node.js** - Entorno de ejecución
+- **Express** - Framework web
+- **PostgreSQL** - Base de datos
+- **AWS S3** - Almacenamiento de imágenes
+- **AWS SDK** - Integración con servicios AWS
+- **Multer** - Manejo de uploads
+- **JWT** - Autenticación
+- **bcryptjs** - Encriptación de contraseñas
+
+## Soporte
+
+Para reportar problemas o solicitar nuevas características, por favor crea un issue en el repositorio de GitHub.
+

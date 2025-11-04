@@ -66,6 +66,7 @@ async function init() {
         precio DECIMAL(10, 2) NOT NULL,
         categoria_id INTEGER,
         disponible BOOLEAN DEFAULT TRUE,
+        imagen_url TEXT,
         CONSTRAINT fk_productos_categoria_id FOREIGN KEY (categoria_id) REFERENCES categorias(id)
       );`,
 
