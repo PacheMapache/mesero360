@@ -93,10 +93,10 @@ async function main() {
     const prodPastel = await getOrCreateProducto({ nombre: 'Pastel de Chocolate', descripcion: 'Porción', precio: 8000, categoria_id: catPostres });
 
     // Usuarios
-    const admin = await getOrCreateUsuario({ nombre: 'Admin', username: 'admin', password: 'admin123', roleNombre: 'Admin' });
-    const mesero = await getOrCreateUsuario({ nombre: 'María Mesera', username: 'mesero1', password: 'mesero123', roleNombre: 'Mesero' });
-    const cajero = await getOrCreateUsuario({ nombre: 'Carlos Cajero', username: 'cajero1', password: 'cajero123', roleNombre: 'Cajero' });
-    const cocinero = await getOrCreateUsuario({ nombre: 'Cata Cocinera', username: 'cocinero1', password: 'cocinero123', roleNombre: 'Cocinero' });
+    const admin = await getOrCreateUsuario({ nombre: 'Admin', username: 'admin@mesero360.com', password: 'admin123', roleNombre: 'Admin' });
+    const mesero = await getOrCreateUsuario({ nombre: 'María Mesera', username: 'mesero1@mesero360.com', password: 'mesero123', roleNombre: 'Mesero' });
+    const cajero = await getOrCreateUsuario({ nombre: 'Carlos Cajero', username: 'cajero1@mesero360.com', password: 'cajero123', roleNombre: 'Cajero' });
+    const cocinero = await getOrCreateUsuario({ nombre: 'Cata Cocinera', username: 'cocinero1@mesero360.com', password: 'cocinero123', roleNombre: 'Cocinero' });
 
     // Mesas
     const mesa1 = await getMesaId(1);
@@ -122,7 +122,11 @@ async function main() {
       ],
     });
 
-    console.log('Seed Demo completado. Usuarios: admin/mesero1/cajero1/cocinero1 (contraseñas *123)');
+    console.log('Seed Demo completado. Usuarios:');
+    console.log('  - admin@mesero360.com / admin123');
+    console.log('  - mesero1@mesero360.com / mesero123');
+    console.log('  - cajero1@mesero360.com / cajero123');
+    console.log('  - cocinero1@mesero360.com / cocinero123');
     process.exit(0);
   } catch (e) {
     console.error('Error en seed demo:', e);
